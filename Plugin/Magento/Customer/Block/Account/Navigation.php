@@ -64,12 +64,6 @@ class Navigation extends \Magento\Customer\Block\Account\Navigation
     public function isShow(&$link)
     {
 
-        $writer = new \Zend_Log_Writer_Stream(BP . '/var/log/custom.log');
-        $logger = new \Zend_Log();
-        $logger->addWriter($writer);
-
-        $logger->info(\print_r($link->getData(), true));
-
         if ($this->helper->getConfig('show_3rd_party_links') == 0):
             {
                 $show = false;
