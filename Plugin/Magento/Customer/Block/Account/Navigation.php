@@ -26,8 +26,7 @@ class Navigation extends \Magento\Customer\Block\Account\Navigation
         Template\Context $context,
         Data $helper,
         array $data = []
-    )
-    {
+    ) {
         parent::__construct($context, $data);
         $this->helper = $helper;
     }
@@ -40,11 +39,14 @@ class Navigation extends \Magento\Customer\Block\Account\Navigation
     public function afterGetLinks(\Magento\Customer\Block\Account\Navigation $subject, $result)
     {
 
-        if ($this->helper->isEnabled() && $subject->getNameInLayout() == 'customer_account_navigation') {
+        if ($this->helper->isEnabled() && $subject->getNameInLayout() == 'customer_account_navigation')
+        {
             $customResult = $resultNew = [];
             /* @var \Magento\Customer\Block\Account\Link $link */
-            foreach ($result as $key => $link) {
-                if ($this->isShow($link)) {
+            foreach ($result as $key => $link)
+            {
+                if ($this->isShow($link))
+                {
                     $customResult[$link->getData('sortOrder')] = $link;
                 }
             }
@@ -62,99 +64,130 @@ class Navigation extends \Magento\Customer\Block\Account\Navigation
     public function isShow(&$link)
     {
 
-        if ($this->helper->getConfig('show_3rd_party_links') == 0) : {
-            $show = false;
-        }
-        else : {
-            $show = true;
-        }
+        $writer = new \Zend_Log_Writer_Stream(BP . '/var/log/custom.log');
+        $logger = new \Zend_Log();
+        $logger->addWriter($writer);
+
+        $logger->info(\print_r($link->getData(), true));
+
+        if ($this->helper->getConfig('show_3rd_party_links') == 0):
+            {
+                $show = false;
+            }
+        else:
+            {
+                $show = true;
+            }
         endif;
 
-	    $sortorder = $link->getsortOrder();
-        switch ($link->getPath()) {
+        $sortorder = $link->getsortOrder();
+        switch ($link->getPath())
+        {
             case 'customer/account':
+                $link->setData('attributes', ['class' => 'customer-account-link customer-account-link-account']);
                 $link->setData('sortOrder', $this->helper->getConfig('position_account'));
                 $show = $this->helper->getConfig('show_account');
                 break;
             case 'sales/order/history':
+                $link->setData('attributes', ['class' => 'customer-account-link customer-account-link-orders']);
                 $link->setData('sortOrder', $this->helper->getConfig('position_orders'));
                 $show = $this->helper->getConfig('show_orders');
                 break;
             case 'downloadable/customer/products':
+                $link->setData('attributes', ['class' => 'customer-account-link customer-account-link-downloadable']);
                 $link->setData('sortOrder', $this->helper->getConfig('position_downloadable_products'));
                 $show = $this->helper->getConfig('show_downloadable_products');
                 break;
             case 'wishlist':
+                $link->setData('attributes', ['class' => 'customer-account-link customer-account-link-wishlist']);
                 $link->setData('sortOrder', $this->helper->getConfig('position_wishlist'));
                 $show = $this->helper->getConfig('show_wishlist');
                 break;
             case 'customer/address':
+                $link->setData('attributes', ['class' => 'customer-account-link customer-account-link-address']);
                 $link->setData('sortOrder', $this->helper->getConfig('position_address_book'));
                 $show = $this->helper->getConfig('show_address_book');
                 break;
             case 'customer/account/edit':
+                $link->setData('attributes', ['class' => 'customer-account-link customer-account-link-edit']);
                 $link->setData('sortOrder', $this->helper->getConfig('position_account_edit'));
                 $show = $this->helper->getConfig('show_account_edit');
                 break;
             case 'vault/cards/listaction':
+                $link->setData('attributes', ['class' => 'customer-account-link customer-account-link-cards']);
                 $link->setData('sortOrder', $this->helper->getConfig('position_cards'));
                 $show = $this->helper->getConfig('show_cards');
                 break;
             case 'paypal/billing_agreement':
+                $link->setData('attributes', ['class' => 'customer-account-link customer-account-link-agreement']);
                 $link->setData('sortOrder', $this->helper->getConfig('position_billing_agreements'));
                 $show = $this->helper->getConfig('show_billing_agreements');
                 break;
             case 'review/customer':
+                $link->setData('attributes', ['class' => 'customer-account-link customer-account-link-reviews']);
                 $link->setData('sortOrder', $this->helper->getConfig('position_reviews'));
                 $show = $this->helper->getConfig('show_reviews');
                 break;
             case 'newsletter/manage':
+                $link->setData('attributes', ['class' => 'customer-account-link customer-account-link-newsletter']);
                 $link->setData('sortOrder', $this->helper->getConfig('position_newsletter'));
                 $show = $this->helper->getConfig('show_newsletter');
                 break;
             case '':
-                if ($sortorder == '0') :  {
-                $link->setData('sortOrder', $this->helper->getConfig('position_hyva_logout'));
-                }
-                elseif ($sortorder == '10') :  {
-                $link->setData('sortOrder', $this->helper->getConfig('position_hyva_divider_1'));
-                $show = 0;
-                }
-                elseif ($sortorder == '130') :  {
-                $link->setData('sortOrder', $this->helper->getConfig('position_divider_1'));
-                $show = 0;
-                }
-                elseif ($sortorder == '200') :  {
-                $link->setData('sortOrder', $this->helper->getConfig('position_divider_2'));
-                $show = 0;
-                }
-                elseif ($sortorder == $this->helper->getConfig('position_hyva_logout')) :  {
-                $show = $this->helper->getConfig('show_hyva_logout');
-                }
-                elseif ($sortorder == $this->helper->getConfig('position_hyva_divider_1')) :  {
-                $show = $this->helper->getConfig('show_hyva_divider_1');
-                }
-                elseif ($sortorder == $this->helper->getConfig('position_divider_1')) :  {
-                $show = $this->helper->getConfig('show_divider_1');
-                }
-                elseif ($sortorder == $this->helper->getConfig('position_divider_2')) :  {
-                $show = $this->helper->getConfig('show_divider_2');
-                }
+                if ($sortorder == '0'):
+                    {
+                        $link->setData('sortOrder', $this->helper->getConfig('position_hyva_logout'));
+                    }
+                elseif ($sortorder == '10'):
+                    {
+                        $link->setData('sortOrder', $this->helper->getConfig('position_hyva_divider_1'));
+                        $show = 0;
+                    }
+                elseif ($sortorder == '130'):
+                    {
+                        $link->setData('sortOrder', $this->helper->getConfig('position_divider_1'));
+                        $show = 0;
+                    }
+                elseif ($sortorder == '200'):
+                    {
+                        $link->setData('sortOrder', $this->helper->getConfig('position_divider_2'));
+                        $show = 0;
+                    }
+                elseif ($sortorder == $this->helper->getConfig('position_hyva_logout')):
+                    {
+                        $show = $this->helper->getConfig('show_hyva_logout');
+                    }
+                elseif ($sortorder == $this->helper->getConfig('position_hyva_divider_1')):
+                    {
+                        $show = $this->helper->getConfig('show_hyva_divider_1');
+                    }
+                elseif ($sortorder == $this->helper->getConfig('position_divider_1')):
+                    {
+                        $show = $this->helper->getConfig('show_divider_1');
+                    }
+                elseif ($sortorder == $this->helper->getConfig('position_divider_2')):
+                    {
+                        $show = $this->helper->getConfig('show_divider_2');
+                    }
                 endif;
-               break;
+                break;
             case $this->helper->getConfig('link_custom_1'):
+                $link->setData('attributes', ['class' => 'customer-account-link customer-account-link-custom-1']);
                 $link->setData('sortOrder', $this->helper->getConfig('position_custom_1'));
                 $show = $this->helper->getConfig('show_custom_1');
                 break;
             case $this->helper->getConfig('link_custom_2'):
+                $link->setData('attributes', ['class' => 'customer-account-link customer-account-link-custom-2']);
                 $link->setData('sortOrder', $this->helper->getConfig('position_custom_2'));
                 $show = $this->helper->getConfig('show_custom_2');
                 break;
             case $this->helper->getConfig('link_custom_3'):
+                $link->setData('attributes', ['class' => 'customer-account-link customer-account-link-custom-3']);
                 $link->setData('sortOrder', $this->helper->getConfig('position_custom_3'));
                 $show = $this->helper->getConfig('show_custom_3');
                 break;
             case $this->helper->getConfig('link_custom_4'):
+                $link->setData('attributes', ['class' => 'customer-account-link customer-account-link-custom-4']);
                 $link->setData('sortOrder', $this->helper->getConfig('position_custom_4'));
                 $show = $this->helper->getConfig('show_custom_4');
                 break;
